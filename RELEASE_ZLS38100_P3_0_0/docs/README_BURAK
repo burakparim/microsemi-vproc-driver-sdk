@@ -1,0 +1,120 @@
+Drivers 
+	There are 3 different Driver folders as listed below
+
+	1. Generic HBI Driver
+		Contains an Generic HBI driver for all microsemi vproc family of devices. Behavior of the driver controlled by setting releavant options in makefile.globals.
+		Refer to HBI_Specification.docx for overview of design and approach
+	
+	2. Linux specific HBI Drivers
+		Contains HBI user and kernel space driver for linux platform. refer to HBI_Linux_Driver_Specification.docx for overview of its features and usage
+	
+	3. Platform Specific Drivers
+		3.1 Ambarella specific
+		3.2 RaspberryPi specific
+			This folder contains zl380xx_Codec and Microsemi_DAC besides HBI driver. microsemi-dac.c contains information related to I2S!
+
+The document ZLS38100_SDK_User_Guide gives the information on how to use the SDK, what is needed for what in a brief way. It also forwards the reader to another documentation, ZLS38100_SDK_Reference_Guide, which has more details about individual components of the SDK. 
+
+Compilation Note(s): 
+	
+	- The SDK supports both single and multi-threading. The applications can open as many instances to each VPD included in that design. The number of instances is defined as a precompile option in the Makefile of the SDK. [2, page 9]
+	
+	- `sudo apt-get install device-tree-compiler` is required! [5, Section 7.3]
+	
+	- Individual component make rules are also supported. One can refer to master Makefile available at Root Directory for other supported target types. [5, Section 7.4.5] 
+		- Eg. `make codec` builds sound driver inside `/platform` directory
+	
+	- Enabling Device Tree Overlay (Follow this section on compliation!) [5, Section 8.1]
+		- Open `/boot/config.txt` add following:
+			- `sudo nano /boot/config.txt`
+			- `dtparam=i2s=on`
+			- `dtoverlay=microsemi-dac-overlay`
+			- `dtoverlay=microsemi-spi-overlay` 
+	
+	- Enable HBI_ENABLE_PROCFS for testing if everything works on SPI [5, Section 8.3]
+	
+	- Leading Sound Driver [5, Section 8.4]
+		- Either choose `snd-soc-zl380xx.ko` or `snd-soc-zl380xx-mixer.ko`! To enable Mixer on Microsemi device's mixer controls choose the second one. It is not possible to install both, since Microsemi's machine codec sees both as the same device. [5, Section 8.6]
+		- NOTE: FOR THE FIRST TRY, DO NOT ACTIVATE THE MIXER OPTION!
+	- Testing the sound driver [5, Section 8.5]
+	
+	- In order to activate `snd-soc-zl380xx-mixer.ko`
+		1. Modify `Makefile.global` and if required master `Makefile` in /sdk/
+	
+	- Compile the SDK Drivers [1]
+		- To compile with I2C interface; [1, Compile the SDK Drivers]
+			`cd RELEASE_ZLS38100_XYZ`
+			`make hbilnx HBI=I2C`
+	
+	- Compile the SDK demo Apps [1]
+		`make apps HBI_TEST=1`
+		`make apps HBI_LOAD_FIRMWARE=1`
+		`make apps HBI_LOAD_GRAMMAR=1`
+	
+	- Compile the FW Converter Tool [1]
+	
+	- Test cases and HOWTO -> [1]
+	
+	- FINAL: After the compilation is done, follow the section 'SDK Testing and Debug' in [1] in order to install compiled modules and test them in a reproducible fashion.
+		- Install kernel modules and configure the Pi
+		- Install demo apps
+		- Install the FW Converter Tool
+		- Testing the SDK
+
+File(s) need customization/modification before compiling the SDK:
+	
+	- sdk/platform/raspberry/driver/ssl/hal_port.c [1]
+		- The fuction 'ssl_dev_info_t' needs to be changed accordingly! [1, Porting the SPI driver into the Pi]
+		- From [1]: The only change required to that code is to create and initialize and instance of the ssl_dev_info_t driver info structure as per the desired number of Timberwolf devices to support and whether to load or not a firmware and related configuration record into these devices at boot time. [1, Porting the SPI driver into the Pi]
+	
+	- sdk/platform/raspberry/driver/ssl/ssl_port.c [1, Modify the Pi dts for the SPI]
+	
+	- sdk/platform/raspberry/driver/sound/lnxalsa/codec/zl380xx_codec.c [1]
+	
+	- sdk/platform/raspberry/driver/sound/lnxalsa/machine/microsemi_dac.c 
+		- static struct snd_soc_dai_link -> ref.: [1, page 29]
+		- Check Q5 and update this file!
+	
+	- sdk/platform/raspberry/kernel/dts/microsemi-spi-overlay.dts
+		- This file will generate *.dtb file when it is compiled. The *.dtb file must be copied on the host platform. For RPi, the compiled *.dtb executable must be copied into /boot/overlays directory on the Pi.
+	
+	- sdk/platform/raspberry/include/typedefs.h [2]
+		This header file contains the data type definitions which is used extensively by the SDK. SDK_Reference_Guide notes that this file under the platform folder must be reviewed and modified by the SDK user if it is necessary. [2, Basic VPROC-SDK Data Types]
+			- Make sure that all the data types are supported on senic-os distro. and NPi-NEO!
+	
+	- Make sure to define relevant variables in Makefile.globals before compiling the SDK. Check the other sub-sections before compiling SDK![5, section 7.4]
+	
+	- Enable Boot from Flash! -> Makefile.globals
+	
+Self Notes on the reading:
+	
+	- How to port and compile the SDK is told on the Porting section of Reference [1]. After reading other parts and understanding what to customize/modify apply those customizations and read the porting section again!
+	
+	- Firmware converter tools requires parameters in order to convert the .s3/.c2 files to .bin or .h files. Be aware of them! [6] 
+	
+	- How to save Firmware and Configuration Record to the slave Flash controlled by Microsemi Device -> [1, flash_save_fwrcfgrec]
+	
+	- How to load a firmware and configuration record from flash -> [1, flash_load_fwrcfgrec]
+	
+	- How to convert and load the firmware -> Testing the SDK -> ZL380xx access over SPI using the Demo Apps [1]
+	
+	- Troubleshooting: [1]
+		- Possible Compilation Errors
+		- Driver/Apps Debug
+		- Audio Debug
+		- SPI/I2C Comm. Errors
+
+Questions:
+	1. vproc_sdk/platform/raspberry/driver/ssl/hal_port.c, line 93: Is it zl38xx0 that I need to change or is it zl380xx, which will be "zl38063" on our application?
+	2. Is file sharing system, Samba, required for compliation? If so, check [5, Appx. A] 
+	3. What is NPi-NEO's Endian mode? Little, big? Update Makefile.globals accordingly if change is required.
+	4. What to do with spi-overlay.dts? The spi address needs to be updated compatibly with NPi-NEO. However we will use I2C. Should we update it with memory address of NEO's SPIx or I2Cx? 
+	5. Will Microsemi ZL38063 DSP IC be the I2S master or slave? -> Go to microsemi-dac.c and update `static struct snd_soc_dai_link snd_microsemi_dac_dai` accordingly!
+
+References
+	[1]: ZLS38100_SDK_User_Guide
+	[2]: ZLS38100_SDK_Reference_Guide
+	[3]: ZLS38100_SDK_Porting_Guide
+	[4]: ZLS38100_HBI_Linux_Driver_Specification
+	[5]: ZLS38100_SDK_Build_Guide_Raspberry
+	[6]: ZLS38100_HBI_Image_Converter_Tool

@@ -1,0 +1,34 @@
+This file contains the change log history on Microsemi vrpoc SDK files. Some files need to be customized before the compilation. Thus, keeping track of the changes in those files may become useful for dubugging purposes.
+
+The format of the change logs will be as it is shown below.
+
+	/sdk_versionXYZ/../file_name
+		Change_Date [FORMAT:dd.mm.yyyy] - Comment(s)_on_Change /* LATEST CHANGE */
+			Line(s) count which has been changed
+				-- Last version
+				++ New version
+		.
+		.
+		Change_Date - Comment(s)_on_Change /* FIRST CHANGE */
+			Line(s) count which has been changed
+				-- Last version
+				++ New version			
+
+CHANGE LOGS:
+	RELEASE_ZL38100_P3_0_0/Makefile.globals
+		
+		06.02.2018
+			line:50
+				--BOOT_FROM_HOST=yes
+				++BOOT_FROM_HOST=no
+
+	RELEASE_ZL38100_P3_0_0/platform/raspberry/kernel/dts/microsemi-dac-overlay.dts
+		
+		06.02.2018
+			line:6
+				--	compatible = "brcm,bcm2708";
+				++	compatible = "sunxi,h3";
+			line:29
+				-- compatible = "ms,zl38040", "ms,zl38050", "ms,zl38060", "ms,zl38080";
+				++ compatible = "ms,zl38063";
+
