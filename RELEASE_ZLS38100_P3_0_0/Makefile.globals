@@ -1,0 +1,96 @@
+# --------------------------------------------------------------------------
+#
+#	FILE NAME:		Makefile.globals
+#     AUTHOR:			
+#	DESCRIPTION:	
+#
+#
+# --------------------------------------------------------------
+PLATFORM=raspberry
+##Ideally required if doing cross compilation so that proper config can be picked up
+RPI_MODEL=2
+PLATFORM_DIR=${ROOTDIR}/platform/$(PLATFORM)
+
+# Assign unique number to each Target type
+TW=1
+SPI=2
+
+#Assign unique number to each HBI 
+I2C=1
+
+# As of now, TARGET identify a Device class i.e. TW or 
+# GAL. But we can make it chip specific as well. Ex. 
+# TARGET=ZL38040,ZL380004,ZL38012 etc.
+# Going futher,we  can devise target specific configuration 
+# file for each target type ex. zl380tw.cfg, 
+# zl380gal.cfg,zl38040.cfg  so on. where each would contain 
+# chip specific parameters as needed to  port GEN_SDK for 
+# given target.
+# 
+# For now we assume all devices under TW class or GALILEO   
+# class share common parameters and features. Thus we have not 
+# introduced a concept of target-specific-config file.
+# But we are open to change to that approach depending upon  
+# deployment of Gen SDK for different target devices and 
+# issues observed during porting for different devices
+
+ifeq ($(TARGET),)
+	TARGET=TW
+endif
+ifeq ($(HBI),)
+	HBI=$(SPI)
+endif
+ifeq ($(HBI_ENABLE_PROCFS),)
+      HBI_ENABLE_PROCFS=1
+endif
+# These also can be input from Make command line. For now, 
+# hardcode or if user wish to change can make change here
+HOST_ENDIAN=little
+VPROC_DEV_ENDIAN=big
+BOOT_FROM_HOST=yes
+FLASH_PRESENT=yes
+BUILD_TYPE=DEBUG
+HBI_MAX_INST_PER_DEV=3
+VPROC_MAX_NUM_DEVS=1
+VPROC_DEV_NAME_SIZE=32
+NUM_MAX_LOCKS=100
+HBI_BUFFER_SIZE=1024
+DEBUG_LEVEL=0x08
+export SHELL=/bin/bash
+
+# Set this to yes, if you want ton compile in the example ALSA codec mixer
+# no, otherwise
+VPROC_CODEC_MIXER_ENABLE=no
+
+# Set these options to 1 if you want to
+# Compile in Firmware/config images statically?
+# yes, no
+HBI_LOAD_FWR_STATIC=no
+HBI_LOAD_CFGREC_STATIC=no
+
+# IF this is enabled linux/firmware.h header is compiled in
+# in order to support bootloading of *.bin at boot
+HBI_ENABLE_FWR_BIN=yes
+
+
+# ------------------------------------------------------------------------------
+# Location of cross compiled Toolchain, Linux, and libs.
+# ------------------------------------------------------------------------------
+ZL380XX_FIRMWARE_IMAGES_PATH =$(ROOTDIR)/platform/$(PLATFORM)/images
+export KSRC=/lib/modules/`uname -r`/build
+#export KSRC=/usr/src/linux-headers-`uname -r`
+##change it as per your setup for cross compilation
+#export KSRC=$(PLATFORM_DIR)/kernel/linux
+export INSTALL_LIB_PATH=$(ROOTDIR)/libs
+export INSTALL_MOD_PATH=$(INSTALL_LIB_PATH)
+##change it as per system for cross compilation for raspberry pi or any other sdk
+#export TOOLSPATH=$(PLATFORM_DIR)/tools/tools/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian
+#export PATH:=$(TOOLSPATH)/bin:$(PATH)
+
+# ------------------------------------------------------------------------------
+# Cross Compiler
+# ------------------------------------------------------------------------------
+##Enable if using cross compiler
+#export CROSS_COMPILE=arm-linux-gnueabihf-
+export ARCH=arm
+export CC=$(CROSS_COMPILE)gcc

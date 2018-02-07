@@ -1,0 +1,9 @@
+this folder contain Raspberry Pi platform enviroment setup. this directory contains following folders:
+
+kernel - kernel contains the kernel source code of raspberry pi kernel
+
+tools - contains toolchain package to setup build environment for rpi board
+
+driver - contains raspberry pi specific driver modules. consists of SSL and sound drivers
+
+doc - contains documentation related to raspberry pi

@@ -1,0 +1,45 @@
+include $(ROOTDIR)/Makefile.globals
+
+LOCAL_PWD:=$(ROOTDIR)/platform/raspberry/kernel
+
+KERNEL_NAME := linux
+KERNEL_VERSION :=
+
+ifeq ($(RPI_MODEL),1)
+	KERNEL:=kernel
+	CONFIG=bcmrpi_defconfig
+else
+	KERNEL:=kernel7
+	CONFIG:=bcm2709_defconfig
+endif
+
+#KERNEL_TARBALL := $(LOCAL_PWD)/$(KERNEL_NAME).tar.gz
+#KERNEL_SRC_DIR_NAME:= $(shell tar tzvf $(KERNEL_TARBALL)|head -1|awk '{print $$6}'|cut -d / -f 1)
+
+all: help unpacked build_kernel
+
+export
+
+build_kernel:
+	$(MAKE) -C $(KERNEL_NAME) $(CONFIG)
+	$(MAKE) -C $(KERNEL_NAME) 
+	$(MAKE) -C $(KERNEL_NAME) zImage modules dtbs
+
+unpacked:
+	#check if there's preexisting untarred kernel. if yes. skip this test
+	if [ ! -d $(KERNEL_NAME) ]; then \
+		@echo "Unpacking  $(KERNEL_TARBALL) ..."; \
+		tar -zxvf $(KERNEL_TARBALL); \
+		mv $(KERNEL_SRC_DIR_NAME) $(KERNEL_NAME); \
+		touch $@; \
+	fi
+
+clean:
+	$(MAKE) -C $(KERNEL_NAME) clean
+
+help:
+	@echo "KERNEL_TARBALL="$(KERNEL_TARBALL)
+	@echo "KERNEL_SRC_DIR_NAME="$(KERNEL_SRC_DIR_NAME) 
+	@echo "SHELL="$(SHELL) 
+	@echo "ROOTDIR="$(ROOTDIR) 
+	

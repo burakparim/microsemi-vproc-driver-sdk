@@ -1,0 +1,9 @@
+this folder contains Ambarella platform enviroment setup. this directory contains following folders:
+
+kernel - kernel contains the kernel source code of the ambarella SDK
+
+tools - contains toolchain package - to compile the code
+
+driver - contains ambarella S2L specific driver modules. consists of SSL and sound drivers
+
+doc - contains documentation 

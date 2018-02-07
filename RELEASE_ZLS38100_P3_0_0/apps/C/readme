@@ -1,0 +1,42 @@
+This directory contains various test application to test Microsemi VPROC Device HBI Driver.
+
+Build Instructions:
+------------------
+
+Apps are built as independent executables. User can conditionally compile them on/off using command line TEST options.
+Below are the build instructions when building using Gen SDK.
+
+- make apps HBI_HELLO=1-  it will build hbi_hello binary
+
+- make apps HBI_TEST=1-  it will build hbi_test binary
+
+- make apps HBI_LOAD_FIRMWARE=1 - build hbi_load_firmware binary
+
+- make apps HBI_LOAD_GRAMMAR=1 - build hbi_load_grammar binary
+
+Running apps 
+------------------
+- Run "make apps TARGET=help"  to get help menu
+- Executables are built inside apps/ directory. 
+- user can run them as "apps/<executable name>
+- on certain linux platform, if user not a root then may need  to use "sudo apps/<executable>
+  Example to run hbi_test:     
+  "sudo apps/hbi_test"
+
+Descriptions:
+-------------
+hbi_hello.c
+- Asimple hello world application based on the SDDK
+
+hbi_test.c 
+
+- Basic HBI Driver testing. Test Include various TEST MACROS that user can enable / disable before compilation.
+  If  no TEST MACRO is enabled, then only basic HBI Driver init/open/close/term API will be tested.
+
+hbi_load_firmware.c
+- Test Dynamic and static firmware and configuration record loading.
+
+hbi_load_firmware.c
+- Test Dynamic ASR grammar loading.
+
+Please refer to docs folder in individual test app for more description on their usage.

@@ -1,0 +1,6 @@
+The linux kernel source code for the Ambarella micro-controllers are provided by Ambarella.
+It is part of the SDK that they provided to customers using their products.
+
+Either copy your Ambarella provided kernel source code in this folder.
+Or simply edit the KSRC= variable in the makefile.globals file  located in the root folder of this SDK
+to point to where the kernel source is located on your development platform.

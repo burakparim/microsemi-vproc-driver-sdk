@@ -1,0 +1,49 @@
+This file contains a brief description of content and usage of modules in this directory. For more details, please refer to ZLS38100_SDK_Build_Guide_Raspberry.pdf in /docs folder.
+
+This directory contains codec driver for Microsemi VPROC Devices.
+
+It contains two variants of driver:
+
+zl380xx_codec.c - a simple i2s codec driver which works with fixed configuration. No audio controls supported. Useful for applications in pure record and playback applications with fixed configurations. Built with command 'make hbilnx' and output as snd-soc-zl380xx.ko
+
+zl380xx_mixer.c - a i2s codec driver with audio controls supported along with record and playback. Current controls support Gain adjustments and mute operations. Built with command 'make hbilnx' and output as snd-soc-zl380xx-mixer.ko
+
+Loading command:
+----------------
+*Either of zl380xx-soc-codec.ko or zl380xx-soc-codec-mixer.ko to be used as both are registered as same code device name.
+
+Make sure to remove zl380xx_soc_codec(if already loaded) before loading this.
+
+sudo insmod zl380-soc-codec-mixer.ko
+
+Testing Mixer driver
+--------------------
+Mixer driver tested with the help of amixer app.
+
+following commands to quick test:
+
+To see list of supported controls:
+amixer -c<card_num> scontrols, or
+amixer -c<card_num> controls
+
+Example, to see control values of card 0
+amixer -c0 controls
+
+To see details of controls:
+amixer -c<card_num> scontents,or
+amixer -c<card_num> contents - this command given numid which is of help in setting and getting control value
+
+Example, to read contents of card 0
+amixer -c0 contents
+
+To read a control value
+amixer -c<card_num> numid=<num_id> 
+
+Example to read value of control with numid=1
+amixer -c0 numid=1 
+
+To write a value
+amixer -c<card_num> numid=<num_id> <val>
+
+Example, to write value of 1 to control with numid=1 a value 1
+amixer -c0 numid=1 1

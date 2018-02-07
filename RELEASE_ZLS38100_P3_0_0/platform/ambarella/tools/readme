@@ -1,0 +1,4 @@
+Compile this SDK with the toolchain provided by Ambarella.
+
+Edit the TOOLSPATH variable in the makefile.globals file  located in the root folder of this SDK
+to point to where the toolchain is located on your development platform.

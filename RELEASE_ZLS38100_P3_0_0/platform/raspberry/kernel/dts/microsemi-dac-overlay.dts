@@ -1,0 +1,34 @@
+// Definitions for Microsemi ZL380 Codec and Echo Canceller Device for Raspberry Pi Platform
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2708";
+	
+	fragment@0 {
+		target = <&sound>;
+		__overlay__ {
+			compatible = "microsemi,microsemi-dac";
+			i2s-controller = <&i2s>;
+			status = "okay";
+		};
+	};
+
+	fragment@1 {
+		target = <&i2s>;
+		__overlay__ {
+			status = "okay";
+		};
+	};
+
+	fragment@2 {
+		target-path = "/";
+		__overlay__ {
+			zl380-codec {
+				#sound-dai-cells = <0>;
+				compatible = "ms,zl38040", "ms,zl38050", "ms,zl38060", "ms,zl38080";
+				status = "okay";
+			};
+		};
+	};
+};

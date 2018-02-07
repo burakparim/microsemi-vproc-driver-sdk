@@ -1,0 +1,32 @@
+This is readme , a first hand document, for Gen SDK describes version information and documentation place holder.
+
+The current Gen SDK  currently has following sub-directories and files.
+
+->Makefile - Master makefile. before using this set relevant build time environment variables in Makefile.globals
+
+->Makefile.globals - container for all build options. user can make changes here to mention current system configuration.
+
+->config.mk - defines all build options to compile-time variables
+
+->docs - contains documentation on Generic SDK. Refer to Generic_SW_Architecture.docx for SDK hierarchy
+
+-> docs/doxygen - contains metadata and doxygen configuration file required for documents generation
+
+->platform directory - contains platform specific drivers, apps and documentation
+
+5. driver
+	Contains an Generic HBI driver for all microsemi vproc family of devices. Behavior of the driver controlled by setting releavant options in makefile.globals.
+	Refer to HBI_Specification.docx for overview of design and approach
+
+6. lnxdriver
+	Contains HBI user and kernel space driver for linux platform. refer to HBI_Linux_Driver_Specification.docx for overview of its features and usage
+
+7. tools 
+	Placeholder to keep tools to convert firmware .s3 image to .bin or .c-style output AND configuration record .cr2 image to c-style output
+
+8. apps
+	placeholder for various sample test apps.
+
+9. thirdparty
+ 	software packages, applications, plugins which acts as typical 3rd-party apps to test Microsemi Device capabilities
+
